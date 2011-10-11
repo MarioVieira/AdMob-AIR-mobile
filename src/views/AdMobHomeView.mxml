@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"  
+		xmlns:utils="net.mariovieira.utils.*"
+		
+		title="HomeView"
+		
+		addedToStage="onAddedToStage(event)">
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.core.FlexGlobals;
+			public static const DEAFULT_ADD_SIZE:int = 80;
+			
+			[Bindable] private var _addHeight :int;
+			[Bindable] public var _adVisible  :Boolean = true;
+			
+			public function onAddedToStage(e:Event):void
+			{
+				stage.addEventListener(Event.RESIZE, onResize);
+			}
+			
+			protected function onResize(event:Event):void
+			{
+				if(stageWebView)
+					stageWebView.updateViewPortMeasures();
+			}
+			
+			public function onAdOpen(e:Event):void
+			{
+				_addHeight = DEAFULT_ADD_SIZE;
+			}
+			
+			public function onAdClosed(e:Event):void
+			{
+				_addHeight = 0;
+			}
+			
+			protected function onToggleAd(event:MouseEvent):void
+			{
+				_adVisible = (_addHeight) ? false : true;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup
+		id="group"
+		horizontalAlign="center"
+		verticalAlign="middle"
+		
+		height="{ height - _addHeight }"
+		width="100%">
+		
+		<s:TextArea
+			borderVisible="false" 
+			contentBackgroundAlpha="0"
+			text="available height: { group.height }"/>
+		
+		<s:Button
+			label="toggle ad"
+			fontSize="16"
+			click="onToggleAd(event)"/>
+		
+	</s:VGroup>
+	
+	<utils:UtilsStageWebView
+		id="stageWebView" 
+		
+		url="http://www.airvideomonitor.com/ads/adMobTest.html" 
+		
+		yOffset="{ FlexGlobals.topLevelApplication.height - DEAFULT_ADD_SIZE }"
+		width="{ FlexGlobals.topLevelApplication.width }"
+		
+		visibilityAllowed="{ _adVisible }"
+		autoShowTimer="true"
+		autoHideTimer="true"
+		
+		showTimerDelay="3000"
+		hideTimerDelay="3000"
+		
+		close="onAdClosed(event)" 
+		open="onAdOpen(event)" />
+	
+	
+</s:View>
